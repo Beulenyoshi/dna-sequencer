@@ -23,6 +23,9 @@ CXX_FLAGS += -Qunused-arguments          # ignore unused compiler arguments
 CXX_FLAGS += -pipe                       # do not use temporary files, use pipes instead
 #CXX_FLAGS += -g # compile debug symbols into the program (use when debugging only, and disable optimizations before)
 
+# Define makefunction
+recwildcard=$(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call recwildcard,$d/,$2))
+
 # Name of the executable
 EXE = main
 
