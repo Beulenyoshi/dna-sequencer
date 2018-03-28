@@ -23,8 +23,8 @@ int main(int argc, char **argv) {
   } else {
 
     // Assigning CL parameters to temporary variables
-    std::string input_file1 = argv[1];
-    std::string input_file2 = argv[2];
+    std::string input_file1_name = argv[1];
+    std::string input_file2_name = argv[2];
     std::string output_file = argv[4];
 
     // Parsing thread count including default fallback of one
