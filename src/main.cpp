@@ -62,6 +62,23 @@ int main(int argc, char **argv) {
     file1.close();
 
     /* log(buffer1); */
+
+    /* Erase headers */
+    size_t found_header_pos = buffer1.find('>');
+
+    while(found_header_pos != std::string::npos) {
+      size_t eol_pos = buffer1.find('\n', found_header_pos);
+      buffer1.erase(found_header_pos, eol_pos);
+      found_header_pos = buffer1.find('>');
+    }
+
+    /* Trim line ends */
+    buffer1.erase(std::remove(buffer1.begin(),
+                              buffer1.end(),
+                              '\n'),
+                  buffer1.end());
+
+
   }
 
   return 0;
