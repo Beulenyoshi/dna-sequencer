@@ -8,6 +8,7 @@
 
 
 #include <iostream>
+#include <fstream>
 #include <ctime>
 
 void log(const std::string message) {
@@ -39,6 +40,28 @@ int main(int argc, char **argv) {
       log("Invalid thread count parameter. Falling back to 1 threaded execution");
     }
 
+    /* Calculting filesize */
+    int size1 = -1;
+    std::ifstream file1(input_file1_name);
+    if (file1) {
+      file1.seekg(0, file1.end);
+      size1 = file1.tellg();
+      file1.seekg(0, file1.beg);
+    }
+
+    /* printf("Size of Buffer: %d\n", size1); */
+
+    /* Rather than manually heap-allocating a buffer of type char* of sufficient
+      size to store the files content, we misuse the much more comfortable std::string
+      datatype. By pulling this off we achive fast IO while keeping the comfort of
+      std::string (including memory management) */
+    std::string buffer1 = std::string(size1, ' ');
+    const char * test = buffer1.c_str();
+    file1.read((char *)test, size1);
+
+    file1.close();
+
+    /* log(buffer1); */
   }
 
   return 0;
