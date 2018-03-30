@@ -17,6 +17,25 @@ void log(const std::string message) {
   std::cout << "[" << now->tm_hour << ":" << now->tm_min << ":" << now->tm_sec << "]: " << message << std::endl;
 }
 
+
+void trim_data(std::string& str) {
+    /* Erase headers */
+    size_t found_header_pos = str.find('>');
+
+    while(found_header_pos != std::string::npos) {
+      size_t eol_pos = str.find('\n', found_header_pos);
+      str.erase(found_header_pos, eol_pos);
+      found_header_pos = str.find('>');
+    }
+
+    /* Trim line ends */
+    str.erase(std::remove(str.begin(),
+                              str.end(),
+                              '\n'),
+                  str.end());
+}
+
+
 int main(int argc, char **argv) {
   if (argc < 5) {
     log("Insufficient arguments supplied:");
@@ -63,20 +82,7 @@ int main(int argc, char **argv) {
 
     /* log(buffer1); */
 
-    /* Erase headers */
-    size_t found_header_pos = buffer1.find('>');
-
-    while(found_header_pos != std::string::npos) {
-      size_t eol_pos = buffer1.find('\n', found_header_pos);
-      buffer1.erase(found_header_pos, eol_pos);
-      found_header_pos = buffer1.find('>');
-    }
-
-    /* Trim line ends */
-    buffer1.erase(std::remove(buffer1.begin(),
-                              buffer1.end(),
-                              '\n'),
-                  buffer1.end());
+    trim_data(buffer1);
 
 
   }
