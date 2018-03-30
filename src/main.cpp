@@ -75,15 +75,32 @@ int main(int argc, char **argv) {
       datatype. By pulling this off we achive fast IO while keeping the comfort of
       std::string (including memory management) */
     std::string buffer1 = std::string(size1, ' ');
-    const char * test = buffer1.c_str();
-    file1.read((char *)test, size1);
+    const char *p_buff1 = buffer1.c_str();
+    file1.read((char *)p_buff1, size1);
 
     file1.close();
 
-    /* log(buffer1); */
+
+    /* Same for file2 */
+    int size2 = -1;
+    std::ifstream file2(input_file2_name);
+    if (file2) {
+      file2.seekg(0, file2.end);
+      size2 = file2.tellg();
+      file2.seekg(0, file2.beg);
+    }
+
+    std::string buffer2 = std::string(size2, ' ');
+    const char *p_buff2 = buffer2.c_str();
+    file2.read((char *)p_buff2, size2);
+
+    file2.close();
 
     trim_data(buffer1);
+    trim_data(buffer2);
 
+    /* log(buffer1); */
+    /* log(buffer2); */
 
   }
 
