@@ -252,11 +252,11 @@ int main(int argc, char **argv) {
       }
     }
 
-    /* Print Matrix */
-    for (const std::vector<int> &v : matrix) {
-         for (int x : v) std::cout << std::setw(6) << x << ' ';
-            std::cout << std::endl;
-    }
+    /* Print Matrix for debugging */
+    /* for (const std::vector<int> &v : matrix) { */
+         /* for (int x : v) std::cout << std::setw(6) << x << ' '; */
+            /* std::cout << std::endl; */
+    /* } */
 
     post_process_data();
     export_data(output_file, input_file1_name, input_file2_name);
