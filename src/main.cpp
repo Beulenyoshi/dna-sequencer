@@ -25,7 +25,18 @@
 /* Globals */
 std::mutex SMS_TRACKER_LOCK;
 
+std::vector<std::tuple<int, int, int>> FINAL_DATA;
 std::vector<std::tuple<int, int, int>> SMS_TRACKER;
+
+
+/* Templates */
+template<int index> struct TupleSortAscending {
+  /* Implements a way to sort tuples inside a vector using the provided index */
+  template<typename Tuple>
+    bool operator() (const Tuple& left, const Tuple& right) const {
+      return std::get<index>(left) < std::get<index>(right);
+    }
+};
 
 
 void log(const std::string message) {
@@ -88,10 +99,59 @@ void export_data(std::string filename, std::string input_1, std::string input_2)
   std::ofstream new_file;
   new_file.open(filename);
   new_file << "start in " << input_1 << ",start in " << input_2 << ",score" << std::endl;
-  for (const auto& t : SMS_TRACKER) {
+  for (const auto& t : FINAL_DATA) {
     new_file << std::get<0>(t) << "," << std::get<1>(t) << "," << std::get<2>(t) << std::endl;
   }
   new_file.close();
+}
+
+
+void post_process_data() {
+  /* Since multiple threads may have accessed the data in this vector, we cannot
+   * guarantee for a uniform output. We start by sorting the array in ascending
+   * order with our first tuple index as reference: */
+  std::sort(SMS_TRACKER.begin(), SMS_TRACKER.end(), TupleSortAscending<0>());
+
+  int last_comparator = 0;
+
+  /* Local Maximum Values */
+  int lm_a            = 0;
+  int lm_b            = 0;
+  int lm_score        = 0;
+
+  /* std::tuple<int, int, int> local_max_ref; */
+
+  for (const auto& t : SMS_TRACKER) {
+    int current_comparator = std::get<0>(t);
+    int current_b          = std::get<1>(t);
+    int current_score      = std::get<2>(t);
+
+    if(current_comparator != last_comparator) {
+      if (last_comparator != 0) {
+        /* We have found a new maximum and therefor have to save it. */
+        FINAL_DATA.push_back(std::make_tuple(lm_a, lm_b, lm_score));
+      }
+
+      /* New value to compare... */
+      last_comparator = current_comparator;
+      lm_a            = current_comparator;
+      lm_b            = current_b;
+      lm_score        = current_score;
+
+    } else {
+      if(current_score > lm_score) {
+        /* We have found a new LOCAL maximum. */
+        lm_a     = current_comparator;
+        lm_b     = current_b;
+        lm_score = current_score;
+      }
+    }
+  }
+
+  if (lm_score != 0) {
+    /* Push last data tuple into data vector */
+    FINAL_DATA.push_back(std::make_tuple(lm_a, lm_b, lm_score));
+  }
 }
 
 
@@ -198,6 +258,7 @@ int main(int argc, char **argv) {
             std::cout << std::endl;
     }
 
+    post_process_data();
     export_data(output_file, input_file1_name, input_file2_name);
   }
 
