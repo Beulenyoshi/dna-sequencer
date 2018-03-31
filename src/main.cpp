@@ -84,6 +84,17 @@ int smith_waterman(const int i,
 }
 
 
+void export_data(std::string filename, std::string input_1, std::string input_2) {
+  std::ofstream new_file;
+  new_file.open(filename);
+  new_file << "start in " << input_1 << ",start in " << input_2 << ",score" << std::endl;
+  for (const auto& t : SMS_TRACKER) {
+    new_file << std::get<0>(t) << "," << std::get<1>(t) << "," << std::get<2>(t) << std::endl;
+  }
+  new_file.close();
+}
+
+
 int main(int argc, char **argv) {
   if (argc < 5) {
     log("Insufficient arguments supplied:");
@@ -187,6 +198,7 @@ int main(int argc, char **argv) {
             std::cout << std::endl;
     }
 
+    export_data(output_file, input_file1_name, input_file2_name);
   }
 
   return 0;
