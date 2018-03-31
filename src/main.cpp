@@ -141,9 +141,11 @@ int main(int argc, char **argv) {
     std::vector<int> line(size1 + 1, 0);
     std::vector<std::vector<int>> matrix(size2 + 1, line);
 
+    int maximum = 0;
     for (int y = 1; y <= size1; ++y) {
       for (int x = 1; x <= size2; ++x) {
         matrix[x][y] = smith_waterman(x, y, buffer1, buffer2, matrix);
+        maximum = std::max(maximum, matrix[x][y]);
       }
     }
 
