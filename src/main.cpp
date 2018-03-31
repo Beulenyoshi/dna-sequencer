@@ -10,6 +10,13 @@
 #include <iostream>
 #include <fstream>
 #include <ctime>
+#include <vector>
+#include <iomanip>
+
+#define MATCH 2
+#define MISMATCH -1
+#define GAP -1
+
 
 void log(const std::string message) {
   std::time_t time = std::time(0);
@@ -33,6 +40,31 @@ void trim_data(std::string& str) {
                               str.end(),
                               '\n'),
                   str.end());
+}
+
+
+int weight(const char a,
+    const char b) {
+  if(a == b) return MATCH;
+  else return MISMATCH;
+}
+
+
+int smith_waterman(const int i,
+                  const int j,
+                  std::string& data1_ref,
+                  std::string& data2_ref,
+                  std::vector<std::vector<int>>& matrix_ref) {
+
+  int local_max = 0;
+
+  local_max = std::max(local_max, matrix_ref[i - 1][j - 1] + weight(data1_ref[i - 1], data2_ref[j - 1]));
+
+  local_max = std::max(local_max, matrix_ref[i - 1][j] + GAP);
+
+  local_max = std::max(local_max, matrix_ref[i][j - 1] + GAP);
+
+  return local_max;
 }
 
 
@@ -99,8 +131,27 @@ int main(int argc, char **argv) {
     trim_data(buffer1);
     trim_data(buffer2);
 
-    /* log(buffer1); */
-    /* log(buffer2); */
+    /* Test */
+    /* buffer2 = "ACACACTA"; */
+    /* buffer1 = "AGCACACA"; */
+    /* size1 = 8; */
+    /* size2 = 8; */
+
+    /* Initialize matrix of size (|m| + 1)*(|n| + 1) with 0 as default */
+    std::vector<int> line(size1 + 1, 0);
+    std::vector<std::vector<int>> matrix(size2 + 1, line);
+
+    for (int y = 1; y <= size1; ++y) {
+      for (int x = 1; x <= size2; ++x) {
+        matrix[x][y] = smith_waterman(x, y, buffer1, buffer2, matrix);
+      }
+    }
+
+    /* Print Matrix */
+    for (const std::vector<int> &v : matrix) {
+         for (int x : v) std::cout << std::setw(6) << x << ' ';
+            std::cout << std::endl;
+    }
 
   }
 
