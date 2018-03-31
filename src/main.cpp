@@ -13,6 +13,8 @@
 #include <vector>
 #include <tuple>
 #include <iomanip>
+#include <thread>
+#include <mutex>
 
 /* Configuration */
 #define MATCH 2
@@ -21,6 +23,8 @@
 #define THRESHOLD 7
 
 /* Globals */
+std::mutex SMS_TRACKER_LOCK;
+
 std::vector<std::tuple<int, int, int>> SMS_TRACKER;
 
 
@@ -46,6 +50,12 @@ void trim_data(std::string& str) {
                               str.end(),
                               '\n'),
                   str.end());
+}
+
+
+void save_tuple(std::tuple<int, int, int> tuple) {
+  std::lock_guard<std::mutex> guard(SMS_TRACKER_LOCK);
+  SMS_TRACKER.push_back(tuple);
 }
 
 
@@ -166,7 +176,7 @@ int main(int argc, char **argv) {
         /* Add score triple to global score tracker */
         if(score >= threshold) {
           std::tuple<int, int, int> triple(x, y, score);
-          SMS_TRACKER.push_back(triple);
+          save_tuple(triple);
         }
       }
     }
