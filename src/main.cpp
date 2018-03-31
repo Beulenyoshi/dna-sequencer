@@ -20,7 +20,7 @@
 #define MATCH 2
 #define MISMATCH -1
 #define GAP -1
-#define THRESHOLD 7
+#define THRESHOLD 70
 
 /* Globals */
 std::mutex SMS_TRACKER_LOCK;
