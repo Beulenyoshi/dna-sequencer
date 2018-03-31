@@ -106,8 +106,6 @@ int main(int argc, char **argv) {
       file1.seekg(0, file1.beg);
     }
 
-    /* printf("Size of Buffer: %d\n", size1); */
-
     /* Rather than manually heap-allocating a buffer of type char* of sufficient
       size to store the files content, we misuse the much more comfortable std::string
       datatype. By pulling this off we achive fast IO while keeping the comfort of
