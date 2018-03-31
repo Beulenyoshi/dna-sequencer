@@ -74,12 +74,12 @@ int main(int argc, char **argv) {
     log("<file1> <file2> <number of threads> <output file>");
   } else {
 
-    // Assigning CL parameters to temporary variables
+    /* Assigning CL parameters to temporary variables */
     std::string input_file1_name = argv[1];
     std::string input_file2_name = argv[2];
     std::string output_file = argv[4];
 
-    // Parsing thread count including default fallback of one
+    /* Parsing thread count including default fallback of one */
     int thread_count = 1;
     try {
       int temp_thread_count = std::stoi(argv[3]);
