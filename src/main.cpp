@@ -11,11 +11,17 @@
 #include <fstream>
 #include <ctime>
 #include <vector>
+#include <tuple>
 #include <iomanip>
 
+/* Configuration */
 #define MATCH 2
 #define MISMATCH -1
 #define GAP -1
+#define THRESHOLD 7
+
+/* Globals */
+std::vector<std::tuple<int, int, int>> SMS_TRACKER;
 
 
 void log(const std::string message) {
@@ -141,11 +147,29 @@ int main(int argc, char **argv) {
     std::vector<int> line(size1 + 1, 0);
     std::vector<std::vector<int>> matrix(size2 + 1, line);
 
+    int threshold = THRESHOLD;
+
     int maximum = 0;
     for (int y = 1; y <= size1; ++y) {
       for (int x = 1; x <= size2; ++x) {
-        matrix[x][y] = smith_waterman(x, y, buffer1, buffer2, matrix);
-        maximum = std::max(maximum, matrix[x][y]);
+
+        int score = smith_waterman(x,
+                                   y,
+                                   buffer1,
+                                   buffer2,
+                                   matrix);
+
+        /* Keep track of maximum */
+        maximum = std::max(maximum, score);
+
+        /* Save score to matrix */
+        matrix[x][y] = score;
+
+        /* Add score triple to global score tracker */
+        if(score >= threshold) {
+          std::tuple<int, int, int> triple(x, y, score);
+          SMS_TRACKER.push_back(triple);
+        }
       }
     }
 
